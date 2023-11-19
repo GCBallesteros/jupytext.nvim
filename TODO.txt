@@ -1,0 +1,9 @@
+The problem with the two below is actually the file extension. The LSP doesn't
+recognnize
+
+- LSP is not working on opened ipynb. LSP doesn't know what to do with ipynb files
+- Notebook navigator not working on opened ipynb. Some as above with NN
+
+Extra
+- Make the call to write notebook async
+
