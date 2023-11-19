@@ -7,11 +7,6 @@ M.config = {
   style = "hydrogen",
 }
 
--- NOTE: The problem with the two TODO below is actually the file extension
--- One solution is completely replace the buffer
--- TODO: LSP is not working until refresh
--- TODO: Notebook navigator not working until refresh
-
 local write_to_ipynb = function(ipynb_filename)
   local metadata = utils.get_ipynb_metadata(ipynb_filename)
   local jupytext_filename = utils.get_jupytext_file(ipynb_filename, metadata.extension)
@@ -19,6 +14,8 @@ local write_to_ipynb = function(ipynb_filename)
 
   vim.cmd.write({ jupytext_filename, bang = true })
   commands.run_jupytext_command(vim.fn.shellescape(jupytext_filename), {
+    ["--update"] = "",
+    ["--to"] = "ipynb",
     ["--output"] = vim.fn.shellescape(ipynb_filename),
   })
 end
@@ -76,6 +73,7 @@ local read_from_ipynb = function(ipynb_filename)
   -- history requires performing a change after setting 'undolevels' to -1 and,
   -- luckily, we have one we need to do (delete the extra line from the :r
   -- command)
+  -- (Comment straight from goerz/jupytext.vim)
   local levels = vim.o.undolevels
   vim.o.undolevels = -1
   vim.api.nvim_command "silent 1delete"
