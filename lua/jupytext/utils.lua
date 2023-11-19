@@ -2,6 +2,10 @@ local M = {}
 
 local language_extensions = {
   python = ".py",
+  julia = ".jl",
+  r = ".r",
+  R = ".r",
+  bash = ".sh",
 }
 
 M.get_ipynb_metadata = function(filename)
