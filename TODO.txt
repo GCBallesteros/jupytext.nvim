@@ -1,9 +1,4 @@
-The problem with the two below is actually the file extension. The LSP doesn't
-recognnize
-
-- LSP is not working on opened ipynb. LSP doesn't know what to do with ipynb files
-- Notebook navigator not working on opened ipynb. Some as above with NN
-
-Extra
+- Some escape hatch for when things go south
 - Make the call to write notebook async
+- Add documentation on how things now work under LazyVim
 

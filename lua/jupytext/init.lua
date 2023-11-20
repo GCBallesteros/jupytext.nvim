@@ -44,7 +44,10 @@ local read_from_ipynb = function(ipynb_filename)
 
   -- This is when the magic happens and we read the new file into the buffer
   if vim.fn.filereadable(jupytext_filename) then
-    vim.api.nvim_command("silent execute 'read ++enc=utf-8 " .. vim.fn.fnameescape(jupytext_filename) .. "'")
+    local jupytext_content = vim.fn.readfile(jupytext_filename)
+
+    -- Replace the buffer content with the jupytext content
+    vim.fn.setline(1, jupytext_content)
   end
 
   -- If jupytext version already existed then don't delete otherwise consider
@@ -105,6 +108,12 @@ M.setup = function(config)
   vim.validate({
     style = { M.config.style, "string" },
   })
+
+  -- If we are using LazyVim make sure to reun the LazyFile event so that the LSP
+  -- and other important plugins get going
+  if pcall(require, "lazy") then
+    vim.api.nvim_exec_autocmds("User", { pattern = "LazyFile", modeline = false })
+  end
 end
 
 return M
