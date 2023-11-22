@@ -12,7 +12,9 @@ features and a simpler configuration.
 ```lua
 return {
   "GCBallesteros/jupytext.nvim",
-  config=true,
+  config = true,
+  -- Depending on your nvim distro or config you may need to make the loading not lazy
+  -- lazy=false,
 }
 ```
 
@@ -20,8 +22,8 @@ return {
 For `jupytext.nvim` to run correctly you will also need to make sure that you
 have the `jupytext` CLI installed (`pip install jupytext`).
 
-If jupytext is available and yet when you open a notebook you still see a wall
-of inescrutable JSON then it may be that `jupytext.nvim` wasn't available due
+If `jupytext` is available and yet when you open a notebook you still see a wall
+of inscrutable JSON then it may be that `jupytext.nvim` wasn't available due
 to lazy loading. The easiest fix is to not lazy load this plugin. For example
 if using `lazy.nvim` just set `lazy=false`. This plugin is tiny and will be a
 rounding error on your startup time.
@@ -41,8 +43,7 @@ If you need something different pass your own configuration to
 `require("jupytext").setup`, e.g.
 
 ```lua
-require("jupytext").setup({style="light"})
-
+require("jupytext").setup({ style = "light" })
 ```
 
 ## Acknowledgements

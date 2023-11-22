@@ -1,4 +1,2 @@
 - Some escape hatch for when things go south
 - Make the call to write notebook async
-- Add documentation on how things now work under LazyVim
-
