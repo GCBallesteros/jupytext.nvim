@@ -48,6 +48,9 @@ local read_from_ipynb = function(ipynb_filename)
 
     -- Replace the buffer content with the jupytext content
     vim.fn.setline(1, jupytext_content)
+  else
+    error "Couldn't find jupytext file."
+    return
   end
 
   -- If jupytext version already existed then don't delete otherwise consider
@@ -92,15 +95,6 @@ local read_from_ipynb = function(ipynb_filename)
   })
 end
 
-vim.api.nvim_create_augroup("jupytext-nvim", { clear = true })
-vim.api.nvim_create_autocmd("BufReadCmd", {
-  pattern = { "*.ipynb" },
-  group = "jupytext-nvim",
-  callback = function(ev)
-    read_from_ipynb(ev.match)
-  end,
-})
-
 M.setup = function(config)
   vim.validate({ config = { config, "table", true } })
   M.config = vim.tbl_deep_extend("force", M.config, config or {})
@@ -109,7 +103,16 @@ M.setup = function(config)
     style = { M.config.style, "string" },
   })
 
-  -- If we are using LazyVim make sure to reun the LazyFile event so that the LSP
+  vim.api.nvim_create_augroup("jupytext-nvim", { clear = true })
+  vim.api.nvim_create_autocmd("BufReadCmd", {
+    pattern = { "*.ipynb" },
+    group = "jupytext-nvim",
+    callback = function(ev)
+      read_from_ipynb(ev.match)
+    end,
+  })
+
+  -- If we are using LazyVim make sure to run the LazyFile event so that the LSP
   -- and other important plugins get going
   if pcall(require, "lazy") then
     vim.api.nvim_exec_autocmds("User", { pattern = "LazyFile", modeline = false })
