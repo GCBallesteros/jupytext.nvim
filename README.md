@@ -17,9 +17,14 @@ return {
 ```
 
 
-
 For `jupytext.nvim` to run correctly you will also need to make sure that you
-have `jupytext` CLI installed (`pip install jupytext`).
+have the `jupytext` CLI installed (`pip install jupytext`).
+
+If jupytext is available and yet when you open a notebook you still see a wall
+of inescrutable JSON then it may be that `jupytext.nvim` wasn't available due
+to lazy loading. The easiest fix is to not lazy load this plugin. For example
+if using `lazy.nvim` just set `lazy=false`. This plugin is tiny and will be a
+rounding error on your startup time.
 
 ## Configuration
 
