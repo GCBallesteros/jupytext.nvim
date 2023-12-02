@@ -5,11 +5,12 @@ local M = {}
 
 M.config = {
   style = "hydrogen",
+  custom_language_formatting = {},
 }
 
-local write_to_ipynb = function(ipynb_filename)
+local write_to_ipynb = function(ipynb_filename, output_extension)
   local metadata = utils.get_ipynb_metadata(ipynb_filename)
-  local jupytext_filename = utils.get_jupytext_file(ipynb_filename, metadata.extension)
+  local jupytext_filename = utils.get_jupytext_file(ipynb_filename, output_extension)
   jupytext_filename = vim.fn.resolve(vim.fn.expand(jupytext_filename))
 
   vim.cmd.write({ jupytext_filename, bang = true })
@@ -30,14 +31,26 @@ local read_from_ipynb = function(ipynb_filename)
   local metadata = utils.get_ipynb_metadata(ipynb_filename)
   local ipynb_filename = vim.fn.resolve(vim.fn.expand(ipynb_filename))
 
-  local jupytext_filename = utils.get_jupytext_file(ipynb_filename, metadata.extension)
+  -- Decide output extension and style
+  local to_extension_and_style
+  local output_extension
+  if utils.check_key(M.config.custom_language_formatting, metadata.language) then
+    local formatting = M.config.custom_language_formatting[metadata.language]
+    output_extension = formatting.extension
+    to_extension_and_style = output_extension .. ":" .. formatting.style
+  else
+    to_extension_and_style = "auto" .. ":" .. M.config.style
+    output_extension = metadata.extension
+  end
+
+  local jupytext_filename = utils.get_jupytext_file(ipynb_filename, output_extension)
   local jupytext_file_exists = vim.fn.filereadable(jupytext_filename) == 1
   -- filename is the notebook
   local filename_exists = vim.fn.filereadable(ipynb_filename)
 
   if filename_exists and not jupytext_file_exists then
     commands.run_jupytext_command(vim.fn.shellescape(ipynb_filename), {
-      ["--to"] = "auto" .. ":" .. M.config.style,
+      ["--to"] = to_extension_and_style,
       ["--output"] = vim.fn.shellescape(jupytext_filename),
     })
   end
@@ -68,11 +81,11 @@ local read_from_ipynb = function(ipynb_filename)
     pattern = "<buffer>",
     group = "jupytext-nvim",
     callback = function(ev)
-      write_to_ipynb(ev.match)
+      write_to_ipynb(ev.match, output_extension)
     end,
   })
 
-  vim.api.nvim_command("setlocal fenc=utf-8 ft=" .. metadata.language)
+  vim.api.nvim_command("setlocal fenc=utf-8 ft=" .. output_extension)
 
   -- In order to make :undo a no-op immediately after the buffer is read, we
   -- need to do this dance with 'undolevels'.  Actually discarding the undo
