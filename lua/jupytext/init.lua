@@ -20,9 +20,11 @@ local write_to_ipynb = function(ipynb_filename)
   })
 end
 
-local cleanup = function(jupytext_filename, delete)
+local cleanup = function(ipynb_filename, delete)
+  local metadata = utils.get_ipynb_metadata(ipynb_filename)
+  local jupytext_filename = utils.get_jupytext_file(ipynb_filename, metadata.extension)
   if delete then
-    vim.cmd.delete(vim.fn.resolve(vim.fn.expand(jupytext_filename)))
+    vim.fn.delete(vim.fn.resolve(vim.fn.expand(jupytext_filename)))
   end
 end
 
