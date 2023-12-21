@@ -34,10 +34,15 @@ local read_from_ipynb = function(ipynb_filename)
   -- Decide output extension and style
   local to_extension_and_style
   local output_extension
+
+  local custom_formatting = nil
   if utils.check_key(M.config.custom_language_formatting, metadata.language) then
-    local formatting = M.config.custom_language_formatting[metadata.language]
-    output_extension = formatting.extension
-    to_extension_and_style = output_extension .. ":" .. formatting.style
+    custom_formatting = M.config.custom_language_formatting[metadata.language]
+  end
+
+  if custom_formatting then
+    output_extension = custom_formatting.extension
+    to_extension_and_style = output_extension .. ":" .. custom_formatting.style
   else
     to_extension_and_style = "auto" .. ":" .. M.config.style
     output_extension = metadata.extension
@@ -85,7 +90,17 @@ local read_from_ipynb = function(ipynb_filename)
     end,
   })
 
-  vim.api.nvim_command("setlocal fenc=utf-8 ft=" .. output_extension)
+  local ft = nil
+  if custom_formatting then
+    if custom_formatting.force_ft then
+      ft = metadata.language
+    end
+  end
+  if not ft then
+    ft = output_extension
+  end
+
+  vim.api.nvim_command("setlocal fenc=utf-8 ft=" .. ft)
 
   -- In order to make :undo a no-op immediately after the buffer is read, we
   -- need to do this dance with 'undolevels'.  Actually discarding the undo
