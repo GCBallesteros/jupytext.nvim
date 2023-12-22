@@ -19,6 +19,7 @@ local write_to_ipynb = function(ipynb_filename, output_extension)
     ["--to"] = "ipynb",
     ["--output"] = vim.fn.shellescape(ipynb_filename),
   })
+  vim.api.nvim_buf_set_option(0, 'modified', false)
 end
 
 local cleanup = function(jupytext_filename, delete)
