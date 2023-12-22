@@ -91,13 +91,15 @@ local read_from_ipynb = function(ipynb_filename)
   })
 
   local ft = nil
-  if custom_formatting then
-    if custom_formatting.force_ft then
-      ft = metadata.language
+  if custom_formatting ~= nil then
+    if custom_formatting.force_ft ~= nil then
+      print(custom_formatting.force_ft)
+      ft = custom_formatting.force_ft
     end
   end
+
   if not ft then
-    ft = output_extension
+    ft = metadata.language
   end
 
   vim.api.nvim_command("setlocal fenc=utf-8 ft=" .. ft)
