@@ -30,8 +30,6 @@ rounding error on your startup time.
 
 ## Configuration
 
-### Simple configuration
-
 The simplest configuration only requires you to decide what plain text
 representation you want jupytext to output. The default configuration is:
 
@@ -46,34 +44,32 @@ If you need something different pass your own configuration to
 
 ```lua
 require("jupytext").setup({ style = "light" })
-
 ```
 
-### Configuration for Quarto users
+> [!TIP]
+> Quarto format users keep on reading!
 
 By default we use the `auto` mode of jupytext. This will create a script with
-the correct extension for each language. However, users of Quarto will want to
-convert the files to Quarto markdown with file extension `qmd`.  The use of the
-`auto` mode can be overriden in a per language basis by explicitly declaring
-what file extension, jupytext style and Neovim filetype you want. For example,
-to use the Quarto file extension and jupytext style with Python you could add
-the following to your configuration.
+the correct extension for each language. However, this can be overriden in a
+per language basis if you want to. For this add to the configuration options an
+field named `custom_language_formatting` which contains a series of per
+language fields. For example:
 
 ```lua
-{
-  custom_language_formatting = {
-    python = {
-      extension = "qmd",
-      style = "quarto",
-      force_ft = "quarto",
-    },
+custom_language_formatting = {
+  python = {
+    extension = "qmd",
+    style = "quarto",
+    force_ft = true,
   },
-},
+}
 ```
 
-The `force_ft` option is there to allow you what filetype you want the buffer
-to be set to. This is important to get other plugins like
-[otter.nvim](https://github.com//otter.nvim) working correctly.
+If `force_ft` is `true` AND the style is `quarto` the filetype for the buffer
+will be set to quarto regardless of the language.  This is important to get
+other plugins like [otter.nvim](https://github.com/jmbuhr/otter.nvim) working
+correctly.
+
 
 
 ## Acknowledgements
