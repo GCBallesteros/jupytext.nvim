@@ -19,7 +19,7 @@ local write_to_ipynb = function(ipynb_filename, output_extension)
     ["--to"] = "ipynb",
     ["--output"] = vim.fn.shellescape(ipynb_filename),
   })
-  vim.api.nvim_buf_set_option(0, 'modified', false)
+  vim.api.nvim_buf_set_option(0, "modified", false)
 end
 
 local cleanup = function(jupytext_filename, delete)
@@ -93,9 +93,10 @@ local read_from_ipynb = function(ipynb_filename)
 
   local ft = nil
   if custom_formatting ~= nil then
-    if custom_formatting.force_ft ~= nil then
-      print(custom_formatting.force_ft)
-      ft = custom_formatting.force_ft
+    if custom_formatting.force_ft then
+      if custom_formatting.style == "quarto" then
+        ft = "quarto"
+      end
     end
   end
 
