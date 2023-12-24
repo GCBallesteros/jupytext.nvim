@@ -9,7 +9,6 @@ M.config = {
 }
 
 local write_to_ipynb = function(ipynb_filename, output_extension)
-  local metadata = utils.get_ipynb_metadata(ipynb_filename)
   local jupytext_filename = utils.get_jupytext_file(ipynb_filename, output_extension)
   jupytext_filename = vim.fn.resolve(vim.fn.expand(jupytext_filename))
 
@@ -65,8 +64,12 @@ local read_from_ipynb = function(ipynb_filename)
   if vim.fn.filereadable(jupytext_filename) then
     local jupytext_content = vim.fn.readfile(jupytext_filename)
 
+    -- Need to add an extra line so that the undo dance that comes later on
+    -- doesn't delete the first line of the actual input
+    table.insert(jupytext_content, 1, "")
+
     -- Replace the buffer content with the jupytext content
-    vim.fn.setline(1, jupytext_content)
+    vim.api.nvim_buf_set_lines(0, 0, -1, false, jupytext_content)
   else
     error "Couldn't find jupytext file."
     return
