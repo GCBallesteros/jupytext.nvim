@@ -30,8 +30,8 @@ rounding error on your startup time.
 
 ## Configuration
 
-The only configuration parameter available is the jupytext style you want to
-use for the plain text version of the files. The default configuration is:
+The simplest configuration only requires you to decide what plain text
+representation you want jupytext to output. The default configuration is:
 
 ```lua
 {
@@ -45,6 +45,32 @@ If you need something different pass your own configuration to
 ```lua
 require("jupytext").setup({ style = "light" })
 ```
+
+> [!TIP]
+> Quarto format users keep on reading!
+
+By default we use the `auto` mode of jupytext. This will create a script with
+the correct extension for each language. However, this can be overriden in a
+per language basis if you want to. For this add to the configuration options an
+field named `custom_language_formatting` which contains a series of per
+language fields. For example:
+
+```lua
+custom_language_formatting = {
+  python = {
+    extension = "qmd",
+    style = "quarto",
+    force_ft = true,
+  },
+}
+```
+
+If `force_ft` is `true` AND the style is `quarto` the filetype for the buffer
+will be set to quarto regardless of the language.  This is important to get
+other plugins like [otter.nvim](https://github.com/jmbuhr/otter.nvim) working
+correctly.
+
+
 
 ## Acknowledgements
 This plugin is a lua port of [goerz/jupytext.vim](https://www.github.com/goerz/jupytext.vim) and it wouldn't have existed without it.

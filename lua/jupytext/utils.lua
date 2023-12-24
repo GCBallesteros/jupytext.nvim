@@ -1,11 +1,11 @@
 local M = {}
 
 local language_extensions = {
-  python = ".py",
-  julia = ".jl",
-  r = ".r",
-  R = ".r",
-  bash = ".sh",
+  python = "py",
+  julia = "jl",
+  r = "r",
+  R = "r",
+  bash = "sh",
 }
 
 M.get_ipynb_metadata = function(filename)
@@ -18,7 +18,17 @@ end
 
 M.get_jupytext_file = function(filename, extension)
   local fileroot = vim.fn.fnamemodify(filename, ":r")
-  return fileroot .. extension
+  return fileroot .. "." .. extension
+end
+
+M.check_key = function(tbl, key)
+  for tbl_key, _ in pairs(tbl) do
+    if tbl_key == key then
+      return true
+    end
+  end
+
+  return false
 end
 
 return M

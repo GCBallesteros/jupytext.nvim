@@ -5,11 +5,11 @@ local M = {}
 
 M.config = {
   style = "hydrogen",
+  custom_language_formatting = {},
 }
 
-local write_to_ipynb = function(ipynb_filename)
-  local metadata = utils.get_ipynb_metadata(ipynb_filename)
-  local jupytext_filename = utils.get_jupytext_file(ipynb_filename, metadata.extension)
+local write_to_ipynb = function(ipynb_filename, output_extension)
+  local jupytext_filename = utils.get_jupytext_file(ipynb_filename, output_extension)
   jupytext_filename = vim.fn.resolve(vim.fn.expand(jupytext_filename))
 
   vim.cmd.write({ jupytext_filename, bang = true })
@@ -18,6 +18,7 @@ local write_to_ipynb = function(ipynb_filename)
     ["--to"] = "ipynb",
     ["--output"] = vim.fn.shellescape(ipynb_filename),
   })
+  vim.api.nvim_buf_set_option(0, "modified", false)
 end
 
 local cleanup = function(ipynb_filename, delete)
@@ -32,14 +33,31 @@ local read_from_ipynb = function(ipynb_filename)
   local metadata = utils.get_ipynb_metadata(ipynb_filename)
   local ipynb_filename = vim.fn.resolve(vim.fn.expand(ipynb_filename))
 
-  local jupytext_filename = utils.get_jupytext_file(ipynb_filename, metadata.extension)
+  -- Decide output extension and style
+  local to_extension_and_style
+  local output_extension
+
+  local custom_formatting = nil
+  if utils.check_key(M.config.custom_language_formatting, metadata.language) then
+    custom_formatting = M.config.custom_language_formatting[metadata.language]
+  end
+
+  if custom_formatting then
+    output_extension = custom_formatting.extension
+    to_extension_and_style = output_extension .. ":" .. custom_formatting.style
+  else
+    to_extension_and_style = "auto" .. ":" .. M.config.style
+    output_extension = metadata.extension
+  end
+
+  local jupytext_filename = utils.get_jupytext_file(ipynb_filename, output_extension)
   local jupytext_file_exists = vim.fn.filereadable(jupytext_filename) == 1
   -- filename is the notebook
   local filename_exists = vim.fn.filereadable(ipynb_filename)
 
   if filename_exists and not jupytext_file_exists then
     commands.run_jupytext_command(vim.fn.shellescape(ipynb_filename), {
-      ["--to"] = "auto" .. ":" .. M.config.style,
+      ["--to"] = to_extension_and_style,
       ["--output"] = vim.fn.shellescape(jupytext_filename),
     })
   end
@@ -48,8 +66,12 @@ local read_from_ipynb = function(ipynb_filename)
   if vim.fn.filereadable(jupytext_filename) then
     local jupytext_content = vim.fn.readfile(jupytext_filename)
 
+    -- Need to add an extra line so that the undo dance that comes later on
+    -- doesn't delete the first line of the actual input
+    table.insert(jupytext_content, 1, "")
+
     -- Replace the buffer content with the jupytext content
-    vim.fn.setline(1, jupytext_content)
+    vim.api.nvim_buf_set_lines(0, 0, -1, false, jupytext_content)
   else
     error "Couldn't find jupytext file."
     return
@@ -70,11 +92,24 @@ local read_from_ipynb = function(ipynb_filename)
     pattern = "<buffer>",
     group = "jupytext-nvim",
     callback = function(ev)
-      write_to_ipynb(ev.match)
+      write_to_ipynb(ev.match, output_extension)
     end,
   })
 
-  vim.api.nvim_command("setlocal fenc=utf-8 ft=" .. metadata.language)
+  local ft = nil
+  if custom_formatting ~= nil then
+    if custom_formatting.force_ft then
+      if custom_formatting.style == "quarto" then
+        ft = "quarto"
+      end
+    end
+  end
+
+  if not ft then
+    ft = metadata.language
+  end
+
+  vim.api.nvim_command("setlocal fenc=utf-8 ft=" .. ft)
 
   -- In order to make :undo a no-op immediately after the buffer is read, we
   -- need to do this dance with 'undolevels'.  Actually discarding the undo
