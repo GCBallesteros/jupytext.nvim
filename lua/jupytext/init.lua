@@ -18,7 +18,8 @@ local write_to_ipynb = function(ipynb_filename, output_extension)
     ["--to"] = "ipynb",
     ["--output"] = vim.fn.shellescape(ipynb_filename),
   })
-  vim.api.nvim_buf_set_option(0, "modified", false)
+  local buf = vim.api.nvim_get_current_buf()
+  vim.api.nvim_set_option_value("modified", false, { scope = "local", buf = buf })
 end
 
 local cleanup = function(ipynb_filename, delete)
@@ -101,6 +102,9 @@ local read_from_ipynb = function(ipynb_filename)
     if custom_formatting.force_ft then
       if custom_formatting.style == "quarto" then
         ft = "quarto"
+      else
+        -- just let the user set whatever ft they want
+        ft = custom_formatting.force_ft
       end
     end
   end

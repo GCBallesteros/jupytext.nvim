@@ -47,29 +47,38 @@ require("jupytext").setup({ style = "light" })
 ```
 
 > [!TIP]
-> Quarto format users keep on reading!
+> Quarto and markdown format users keep on reading!
 
 By default we use the `auto` mode of jupytext. This will create a script with
-the correct extension for each language. However, this can be overriden in a
-per language basis if you want to. For this add to the configuration options an
+the correct extension for each language. However, this can be overridden in a
+per language basis if you want to. For this add to the configuration options a
 field named `custom_language_formatting` which contains a series of per
-language fields. For example:
+language fields. For example, to convert python files to quarto markdown:
 
 ```lua
 custom_language_formatting = {
   python = {
     extension = "qmd",
     style = "quarto",
-    force_ft = true,
+    force_ft = "quarto", -- you can set whatever filetype you want here
   },
 }
 ```
 
-If `force_ft` is `true` AND the style is `quarto` the filetype for the buffer
-will be set to quarto regardless of the language.  This is important to get
-other plugins like [otter.nvim](https://github.com/jmbuhr/otter.nvim) working
-correctly.
+Or, for regular markdown:
 
+```lua
+custom_language_formatting = {
+  python = {
+    extension = "md",
+    style = "markdown",
+    force_ft = "markdown", -- you can set whatever filetype you want here
+  },
+}
+```
+
+Setting force_ft is important to get other plugins like
+[otter.nvim](https://github.com/jmbuhr/otter.nvim) working correctly.
 
 
 ## Acknowledgements
