@@ -19,7 +19,7 @@ local write_to_ipynb = function(ipynb_filename, output_extension)
     ["--output"] = vim.fn.shellescape(ipynb_filename),
   })
   local buf = vim.api.nvim_get_current_buf()
-  vim.api.nvim_set_option_value("modified", false, { scope = "local", buf = buf })
+  vim.api.nvim_set_option_value("modified", false, { buf = buf })
 end
 
 local cleanup = function(ipynb_filename, delete)
