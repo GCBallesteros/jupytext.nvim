@@ -31,23 +31,9 @@ end
 
 local cleanup = function(ipynb_filename, delete)
   local metadata = utils.get_ipynb_metadata(ipynb_filename)
-
-  local custom_formatting = nil
-  if utils.check_key(M.config.custom_language_formatting, metadata.language) then
-    custom_formatting = M.config.custom_language_formatting[metadata.language]
-  end
-
-  local output_extension = nil
-
-  if custom_formatting then
-    output_extension = custom_formatting.extension
-  else
-    output_extension = metadata.extension
-  end
-
-  local jupytext_filename = utils.get_jupytext_file(ipynb_filename, output_extension)
+  local jupytext_filename = utils.get_jupytext_file(ipynb_filename, metadata.extension)
   if delete then
-    vim.fn.delete(P(vim.fn.resolve(vim.fn.expand(jupytext_filename))))
+    vim.fn.delete(vim.fn.resolve(vim.fn.expand(jupytext_filename)))
   end
 end
 
