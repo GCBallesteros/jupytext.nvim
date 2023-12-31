@@ -8,7 +8,8 @@ M.config = {
   custom_language_formatting = {},
 }
 
-local write_to_ipynb = function(ipynb_filename, output_extension)
+local write_to_ipynb = function(event, output_extension)
+  local ipynb_filename = event.match
   local jupytext_filename = utils.get_jupytext_file(ipynb_filename, output_extension)
   jupytext_filename = vim.fn.resolve(vim.fn.expand(jupytext_filename))
 
@@ -20,6 +21,12 @@ local write_to_ipynb = function(ipynb_filename, output_extension)
   })
   local buf = vim.api.nvim_get_current_buf()
   vim.api.nvim_set_option_value("modified", false, { buf = buf })
+
+  local post_write = "BufWritePost"
+  if event.event == "FileWriteCmd" then
+    post_write = "FileWritePost"
+  end
+  vim.api.nvim_exec_autocmds(post_write, { pattern = ipynb_filename })
 end
 
 local cleanup = function(ipynb_filename, delete)
@@ -93,7 +100,7 @@ local read_from_ipynb = function(ipynb_filename)
     pattern = "<buffer>",
     group = "jupytext-nvim",
     callback = function(ev)
-      write_to_ipynb(ev.match, output_extension)
+      write_to_ipynb(ev, output_extension)
     end,
   })
 
