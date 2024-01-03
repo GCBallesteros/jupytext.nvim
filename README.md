@@ -36,8 +36,15 @@ representation you want jupytext to output. The default configuration is:
 ```lua
 {
   style = "hydrogen",
+  extension = "auto",  -- don't change unless you know what you are doing
+  custom_language_formatting = {},
 }
 ```
+
+By default, the extension of the plain text file is automatically selected by
+jupytext. This can be modified by changing the extension from `auto` to any
+other file extension supported by Jupytext. This is most useful to those using
+Quarto or Markdown.
 
 If you need something different pass your own configuration to
 `require("jupytext").setup`, e.g.
