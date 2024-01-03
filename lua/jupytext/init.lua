@@ -29,19 +29,7 @@ local write_to_ipynb = function(event, output_extension)
   vim.api.nvim_exec_autocmds(post_write, { pattern = ipynb_filename })
 end
 
-local cleanup = function(ipynb_filename, delete)
-  local metadata = utils.get_ipynb_metadata(ipynb_filename)
-  local jupytext_filename = utils.get_jupytext_file(ipynb_filename, metadata.extension)
-  if delete then
-    vim.fn.delete(vim.fn.resolve(vim.fn.expand(jupytext_filename)))
-  end
-end
-
-local read_from_ipynb = function(ipynb_filename)
-  local metadata = utils.get_ipynb_metadata(ipynb_filename)
-  local ipynb_filename = vim.fn.resolve(vim.fn.expand(ipynb_filename))
-
-  -- Decide output extension and style
+local style_and_extension = function(metadata)
   local to_extension_and_style
   local output_extension
 
@@ -54,9 +42,30 @@ local read_from_ipynb = function(ipynb_filename)
     output_extension = custom_formatting.extension
     to_extension_and_style = output_extension .. ":" .. custom_formatting.style
   else
-    to_extension_and_style = "auto" .. ":" .. M.config.style
     output_extension = metadata.extension
+    to_extension_and_style = "auto" .. ":" .. M.config.style
   end
+
+  return custom_formatting, output_extension, to_extension_and_style
+end
+
+local cleanup = function(ipynb_filename, delete)
+  local metadata = utils.get_ipynb_metadata(ipynb_filename)
+
+  local _, output_extension, _ = style_and_extension(metadata)
+
+  local jupytext_filename = utils.get_jupytext_file(ipynb_filename, output_extension)
+  if delete then
+    vim.fn.delete(vim.fn.resolve(vim.fn.expand(jupytext_filename)))
+  end
+end
+
+local read_from_ipynb = function(ipynb_filename)
+  local metadata = utils.get_ipynb_metadata(ipynb_filename)
+  local ipynb_filename = vim.fn.resolve(vim.fn.expand(ipynb_filename))
+
+  -- Decide output extension and style
+  local custom_formatting, output_extension, to_extension_and_style = style_and_extension(metadata)
 
   local jupytext_filename = utils.get_jupytext_file(ipynb_filename, output_extension)
   local jupytext_file_exists = vim.fn.filereadable(jupytext_filename) == 1
