@@ -36,7 +36,7 @@ representation you want jupytext to output. The default configuration is:
 ```lua
 {
   style = "hydrogen",
-  extension = "auto",  -- Default extension. Don't change unless you know what you are doing
+  output_extension = "auto",  -- Default extension. Don't change unless you know what you are doing
   force_ft = nil,  -- Default filetype. Don't change unless you know what you are doing
   custom_language_formatting = {},
 }

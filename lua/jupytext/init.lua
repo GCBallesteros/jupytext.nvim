@@ -44,7 +44,11 @@ local style_and_extension = function(metadata)
     output_extension = custom_formatting.extension
     to_extension_and_style = output_extension .. ":" .. custom_formatting.style
   else
-    output_extension = metadata.extension
+    if M.config.output_extension == "auto" then
+      output_extension = metadata.extension
+    else
+      output_extension = M.config.output_extension
+    end
     to_extension_and_style = M.config.output_extension .. ":" .. M.config.style
   end
 
