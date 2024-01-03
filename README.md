@@ -49,6 +49,11 @@ Quarto or Markdown. Analogously, we can provide a default filetype that will be
 given to the new buffer by using `force_ft`. Again, this is only really useful
 to users of Quarto.
 
+> [!IMPORTANT]
+> Some combinations of style and extensions are incompatible and Jupytext will
+> fail if you attempt them, e.g. the `md` extension with the `quarto` style.
+> You will see this as an error from the `read_ipynb` function.
+
 If you need something different pass your own configuration to
 `require("jupytext").setup`, e.g.
 
