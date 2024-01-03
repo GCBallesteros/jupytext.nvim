@@ -5,6 +5,7 @@ local M = {}
 
 M.config = {
   style = "hydrogen",
+  output_extension = "auto",
   custom_language_formatting = {},
 }
 
@@ -43,7 +44,7 @@ local style_and_extension = function(metadata)
     to_extension_and_style = output_extension .. ":" .. custom_formatting.style
   else
     output_extension = metadata.extension
-    to_extension_and_style = "auto" .. ":" .. M.config.style
+    to_extension_and_style = M.config.output_extension .. ":" .. M.config.style
   end
 
   return custom_formatting, output_extension, to_extension_and_style
