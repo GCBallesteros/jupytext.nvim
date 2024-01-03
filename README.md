@@ -36,7 +36,8 @@ representation you want jupytext to output. The default configuration is:
 ```lua
 {
   style = "hydrogen",
-  extension = "auto",  -- don't change unless you know what you are doing
+  extension = "auto",  -- Default extension. Don't change unless you know what you are doing
+  force_ft = nil,  -- Default filetype. Don't change unless you know what you are doing
   custom_language_formatting = {},
 }
 ```
@@ -44,7 +45,9 @@ representation you want jupytext to output. The default configuration is:
 By default, the extension of the plain text file is automatically selected by
 jupytext. This can be modified by changing the extension from `auto` to any
 other file extension supported by Jupytext. This is most useful to those using
-Quarto or Markdown.
+Quarto or Markdown. Analogously, we can provide a default filetype that will be
+given to the new buffer by using `force_ft`. Again, this is only really useful
+to users of Quarto.
 
 If you need something different pass your own configuration to
 `require("jupytext").setup`, e.g.
