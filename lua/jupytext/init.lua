@@ -5,6 +5,8 @@ local M = {}
 
 M.config = {
   style = "hydrogen",
+  output_extension = "auto",
+  force_ft = nil,
   custom_language_formatting = {},
 }
 
@@ -43,7 +45,7 @@ local style_and_extension = function(metadata)
     to_extension_and_style = output_extension .. ":" .. custom_formatting.style
   else
     output_extension = metadata.extension
-    to_extension_and_style = "auto" .. ":" .. M.config.style
+    to_extension_and_style = M.config.output_extension .. ":" .. M.config.style
   end
 
   return custom_formatting, output_extension, to_extension_and_style
@@ -113,7 +115,8 @@ local read_from_ipynb = function(ipynb_filename)
     end,
   })
 
-  local ft = nil
+  local ft = M.config.force_ft
+
   if custom_formatting ~= nil then
     if custom_formatting.force_ft then
       if custom_formatting.style == "quarto" then
@@ -158,6 +161,7 @@ M.setup = function(config)
 
   vim.validate({
     style = { M.config.style, "string" },
+    output_extension = { M.config.output_extension, "string" },
   })
 
   vim.api.nvim_create_augroup("jupytext-nvim", { clear = true })
