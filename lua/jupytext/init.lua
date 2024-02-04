@@ -93,6 +93,13 @@ local read_from_ipynb = function(ipynb_filename)
     -- doesn't delete the first line of the actual input
     table.insert(jupytext_content, 1, "")
 
+    -- This allows opening files that have `\n` in lines
+    -- which is DISTINCT from a literal newline character
+    -- (think `\neq` in LaTeX)
+    for i,v in ipairs(jupytext_content) do
+      jupytext_content[i] = v:gsub("\n", "\\n")
+    end
+
     -- Replace the buffer content with the jupytext content
     vim.api.nvim_buf_set_lines(0, 0, -1, false, jupytext_content)
   else
