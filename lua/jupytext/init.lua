@@ -93,11 +93,10 @@ local read_from_ipynb = function(ipynb_filename)
     -- doesn't delete the first line of the actual input
     table.insert(jupytext_content, 1, "")
 
-    -- This allows opening files that have `\n` in lines
-    -- which is DISTINCT from a literal newline character
-    -- (think `\neq` in LaTeX)
+    -- This allows opening files that have the null character
+    -- in them (`\0`, the character represented by ASCII 0)
     for i,v in ipairs(jupytext_content) do
-      jupytext_content[i] = v:gsub("\n", "\\n")
+      jupytext_content[i] = v:gsub("\n", "\0")
     end
 
     -- Replace the buffer content with the jupytext content
