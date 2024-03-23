@@ -8,9 +8,16 @@ local language_extensions = {
   bash = "sh",
 }
 
+local language_names = {
+  python3 = "python",
+}
+
 M.get_ipynb_metadata = function(filename)
   local metadata = vim.json.decode(io.open(filename, "r"):read "a")["metadata"]
   local language = metadata.kernelspec.language
+  if language == nil then
+    language = language_names[metadata.kernelspec.name]
+  end
   local extension = language_extensions[language]
 
   return { language = language, extension = extension }
