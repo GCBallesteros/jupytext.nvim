@@ -136,8 +136,6 @@ local read_from_ipynb = function(ipynb_filename)
     ft = metadata.language
   end
 
-  vim.api.nvim_command("setlocal fenc=utf-8 ft=" .. ft)
-
   -- In order to make :undo a no-op immediately after the buffer is read, we
   -- need to do this dance with 'undolevels'.  Actually discarding the undo
   -- history requires performing a change after setting 'undolevels' to -1 and,
@@ -148,6 +146,8 @@ local read_from_ipynb = function(ipynb_filename)
   vim.o.undolevels = -1
   vim.api.nvim_command "silent 1delete"
   vim.o.undolevels = levels
+
+  vim.api.nvim_command("setlocal fenc=utf-8 ft=" .. ft)
 
   -- First time we enter the buffer redraw. Don't know why but jupytext.vim was
   -- doing it. Apply Chesterton's fence principle.
