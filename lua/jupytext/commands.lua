@@ -1,13 +1,14 @@
 local M = {}
 
 M.run_jupytext_command = function(input_file, options)
-  local cmd = "jupytext " .. input_file .. " "
+  local cmd = { "jupytext", input_file }
   for option_name, option_value in pairs(options) do
     if option_value ~= "" then
-      cmd = cmd .. option_name .. "=" .. option_value .. " "
+      local option = option_name .. "=" .. option_value
+      table.insert(cmd, option)
     else
       -- empty string value implies this options is just a flag
-      cmd = cmd .. option_name .. " "
+      table.insert(cmd, option_name)
     end
   end
 
