@@ -8,7 +8,9 @@ plain text alternatives. Powered by [jupytext](https://www.github.com/mwouts/jup
 features and a simpler configuration.
 
 ## Installation
+
 `lazy.nvim` example:
+
 ```lua
 return {
   "GCBallesteros/jupytext.nvim",
@@ -17,7 +19,6 @@ return {
   -- lazy=false,
 }
 ```
-
 
 For `jupytext.nvim` to run correctly you will also need to make sure that you
 have the `jupytext` CLI installed (`pip install jupytext`).
@@ -39,6 +40,7 @@ representation you want jupytext to output. The default configuration is:
   output_extension = "auto",  -- Default extension. Don't change unless you know what you are doing
   force_ft = nil,  -- Default filetype. Don't change unless you know what you are doing
   custom_language_formatting = {},
+  empty_notebook_generator = empty_notebook, -- Where empty_notebook is a function that returns the json representation of an empty notebook.
 }
 ```
 
@@ -95,6 +97,6 @@ custom_language_formatting = {
 Setting force_ft is important to get other plugins like
 [otter.nvim](https://github.com/jmbuhr/otter.nvim) working correctly.
 
-
 ## Acknowledgements
+
 This plugin is a lua port of [goerz/jupytext.vim](https://www.github.com/goerz/jupytext.vim) and it wouldn't have existed without it.

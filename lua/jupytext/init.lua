@@ -3,11 +3,50 @@ local utils = require "jupytext.utils"
 
 local M = {}
 
+local function empty_notebook()
+  return [[{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "initial_id",
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 2
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython2",
+   "version": "2.7.6"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}]]
+end
+
 M.config = {
   style = "hydrogen",
   output_extension = "auto",
   force_ft = nil,
   custom_language_formatting = {},
+  empty_notebook_generator = empty_notebook,
 }
 
 local write_to_ipynb = function(event, output_extension)
@@ -66,9 +105,28 @@ local cleanup = function(ipynb_filename, delete)
   end
 end
 
+local function check_new_file(filename)
+  local file_content = ""
+  if vim.fn.filereadable(filename) == 1 then
+    file_content = io.open(filename, "r"):read "a"
+  end
+  if M.config.empty_notebook_generator and file_content == "" then
+    file_content = M.config.empty_notebook_generator()
+  end
+  local file = io.open(filename, "w")
+  if not file then
+    vim.notify "Failed to create empty Jupyter Notebook"
+    return
+  end
+  -- Write the content to the file
+  file:write(file_content)
+  file:close()
+end
+
 local read_from_ipynb = function(ipynb_filename)
+  check_new_file(ipynb_filename)
   local metadata = utils.get_ipynb_metadata(ipynb_filename)
-  local ipynb_filename = vim.fn.resolve(vim.fn.expand(ipynb_filename))
+  ipynb_filename = vim.fn.resolve(vim.fn.expand(ipynb_filename))
 
   -- Decide output extension and style
   local custom_formatting, output_extension, to_extension_and_style = style_and_extension(metadata)
