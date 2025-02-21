@@ -1,7 +1,12 @@
 local M = {}
 
 M.run_jupytext_command = function(input_file, options)
-  local cmd = "jupytext " .. input_file .. " "
+  local cmd = ""
+  if vim.g.python3_host_prog ~= nil and vim.fn.executable "jupytext" == 0 then
+    cmd = vim.g.python3_host_prog .. " -m "
+  end
+
+  cmd = cmd .. "jupytext " .. input_file .. " "
   for option_name, option_value in pairs(options) do
     if option_value ~= "" then
       cmd = cmd .. option_name .. "=" .. option_value .. " "

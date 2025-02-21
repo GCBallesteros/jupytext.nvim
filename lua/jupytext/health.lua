@@ -2,7 +2,13 @@ local M = {}
 
 M.check = function()
   vim.health.report_start "jupytext.nvim"
-  vim.fn.system "jupytext --version"
+
+  local cmd = ""
+  if vim.g.python3_host_prog ~= nil and vim.fn.executable "jupytext" == 0 then
+    cmd = vim.g.python3_host_prog .. " -m "
+  end
+
+  vim.fn.system(cmd .. "jupytext --version")
 
   if vim.v.shell_error == 0 then
     vim.health.report_ok "Jupytext is available"
