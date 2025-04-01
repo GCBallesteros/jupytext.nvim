@@ -160,13 +160,11 @@ local read_from_ipynb = function(ipynb_filename)
 end
 
 M.setup = function(config)
-  vim.validate({ config = { config, "table", true } })
+  vim.validate("config", config, "table", true)
   M.config = vim.tbl_deep_extend("force", M.config, config or {})
 
-  vim.validate({
-    style = { M.config.style, "string" },
-    output_extension = { M.config.output_extension, "string" },
-  })
+  vim.validate("style", M.config.style, "string")
+  vim.validate("output_extension", M.config.output_extension, "string")
 
   vim.api.nvim_create_augroup("jupytext-nvim", { clear = true })
   vim.api.nvim_create_autocmd("BufReadCmd", {
