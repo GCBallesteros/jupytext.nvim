@@ -15,7 +15,7 @@ M.run_jupytext_command = function(input_file, options)
 
   if vim.v.shell_error ~= 0 then
     print(output)
-    vim.api.nvim_err_writeln(cmd .. ": " .. vim.v.shell_error)
+    vim.api.nvim_echo(cmd .. ": " .. vim.v.shell_error, true, { err = true })
     return
   end
 end
