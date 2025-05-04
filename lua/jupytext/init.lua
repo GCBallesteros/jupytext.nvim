@@ -136,6 +136,10 @@ local read_from_ipynb = function(ipynb_filename)
     ft = metadata.language
   end
 
+  if ft == "c++" then
+    ft = "cpp"
+  end
+
   -- In order to make :undo a no-op immediately after the buffer is read, we
   -- need to do this dance with 'undolevels'.  Actually discarding the undo
   -- history requires performing a change after setting 'undolevels' to -1 and,

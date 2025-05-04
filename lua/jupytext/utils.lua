@@ -7,6 +7,7 @@ local language_extensions = {
   R = "r",
   bash = "sh",
 }
+language_extensions["c++"] = "cpp"
 
 local language_names = {
   python3 = "python",
