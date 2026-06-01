@@ -49,7 +49,7 @@ local style_and_extension = function(metadata)
     else
       output_extension = M.config.output_extension
     end
-    to_extension_and_style = M.config.output_extension .. ":" .. M.config.style
+    to_extension_and_style = output_extension .. ":" .. M.config.style
   end
 
   return custom_formatting, output_extension, to_extension_and_style
